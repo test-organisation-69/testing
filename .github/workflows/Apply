@@ -1,0 +1,27 @@
+name: Apply
+
+on:
+  workflow_run:
+    workflows: ["Plan"]
+    types: [completed]
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Download artifact from the completed "Plan" workflow run
+      - name: Download Plan Artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: Plan  # Name of the workflow that produced the artifact
+          run_id: ${{ github.event.workflow_run.id }}
+          name: artifact     # Replace with the actual artifact name if different
+          path: ./         # Destination directory
+
+      # Example: Use the downloaded artifact (e.g., Terraform Apply)
+      - name: Terraform Apply
+        run: ls
