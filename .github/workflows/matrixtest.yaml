@@ -1,0 +1,22 @@
+name: Apply
+
+on:
+
+jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      values: ${{ steps.set-matrix.outputs.values }}
+    steps:
+      - name: Set matrix values
+        id: set-matrix
+        run: echo 'values=["a","b","c"]' >> "$GITHUB_OUTPUT"
+
+  run-matrix:
+    needs: define-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        item: ${{ fromJson(needs.define-matrix.outputs.values) }}
+    steps:
+      - run: echo "Processing ${{ matrix.item }}"
